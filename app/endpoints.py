@@ -1,4 +1,4 @@
-from app import app
+from app import app, cache
 from app.helpers import get_ip_network, reverse_lookups, reverse_lookups_socket, reverse_lookups_socket_async
 from flask import request, jsonify
 import asyncio
@@ -14,7 +14,8 @@ def after_request(response):
     return response
 
 @app.route("/reverse-lookups")
-def get_reverse_lookups():
+@cache.memoize()
+def get_reverse_lookups(*args):
     cidr = request.args.get("cidr")
     pattern = request.args.get("search") or ""
     
@@ -33,7 +34,8 @@ def get_reverse_lookups():
     return jsonify(response)
 
 @app.route("/reverse-lookups/second")
-def get_reverse_lookups_with_socket():
+@cache.memoize()
+def get_reverse_lookups_with_socket(*args):
     cidr = request.args.get("cidr")
     pattern = request.args.get("search") or ""
     
@@ -52,7 +54,8 @@ def get_reverse_lookups_with_socket():
     return jsonify(response)
 
 @app.route("/reverse-lookups/async")
-def get_reverse_lookups_with_socket_async():
+@cache.memoize()
+def get_reverse_lookups_with_socket_async(*args):
     cidr = request.args.get("cidr")
     pattern = request.args.get("search") or ""
     
